@@ -15,7 +15,8 @@
  */
 package org.guernsey;
 
-import org.guernsey.annotation.GET;
+import org.guernsey.internal.GetAdapter;
+import org.guernsey.internal.RestResponse;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -24,20 +25,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.lexicalscope.fluentreflection.FluentReflection.object;
-import static com.lexicalscope.fluentreflection.ReflectionMatchers.annotatedWith;
-
 public class GuernseyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String body = object(this).method(annotatedWith(GET.class)).call().toString();
-        ServletOutputStream outputStream = resp.getOutputStream();
-        try {
-            outputStream.write(body.getBytes());
-        } finally {
-            outputStream.close();
+        String path = req.getServletPath();
+        GetAdapter getAdapter = new GetAdapter(this, path);
+        RestResponse restResponse = getAdapter.restResponse();
+        String body = restResponse.getBody();
+        if (body != null) {
+            ServletOutputStream outputStream = resp.getOutputStream();
+            try {
+                outputStream.write(body.getBytes());
+            } finally {
+                outputStream.close();
+            }
         }
-        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setStatus(restResponse.getStatus());
     }
+
+
 }

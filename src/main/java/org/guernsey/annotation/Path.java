@@ -1,4 +1,4 @@
-/*
+package org.guernsey.annotation;/*
  * Copyright 2013 Benoît Prioux
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,27 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.guernsey;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.guernsey.annotation.GET;
-import org.guernsey.annotation.Path;
+/**
+ * Identifies the URI path that a resource class or class method will serve
+ * requests for.
+ *
+ */
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Path {
+    String value();
 
-public class GetServlet extends GuernseyServlet {
-
-    @GET
-    public String sayHello() {
-        return "Hello World";
-    }
-
-    @GET
-    @Path("foo")
-    public String foo() {
-        return "foo";
-    }
-
-    @GET
-    @Path("/bar")
-    public String bar() {
-        return "bar";
-    }
 }

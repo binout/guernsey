@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.guernsey;
+package org.guernsey.internal;
 
-import org.guernsey.annotation.GET;
-import org.guernsey.annotation.Path;
+public class RestResponse {
 
-public class GetServlet extends GuernseyServlet {
+    private int status;
+    private String body;
 
-    @GET
-    public String sayHello() {
-        return "Hello World";
+    public RestResponse withStatus(int status) {
+        this.status = status;
+        return this;
     }
 
-    @GET
-    @Path("foo")
-    public String foo() {
-        return "foo";
+    public RestResponse withBody(String body) {
+        this.body = body;
+        return this;
     }
 
-    @GET
-    @Path("/bar")
-    public String bar() {
-        return "bar";
+    public int getStatus() {
+        return status;
+    }
+
+    public String getBody() {
+        return body;
     }
 }

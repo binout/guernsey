@@ -45,4 +45,27 @@ public class GetServletTest {
         assertThat(httpRequest.body()).isEqualTo("Hello World");
     }
 
+    @Test
+    public void should_get_with_path() {
+        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/foo");
+
+        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_OK);
+        assertThat(httpRequest.body()).isEqualTo("foo");
+    }
+
+    @Test
+    public void should_get_with_path_leading_slash() {
+        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/bar");
+
+        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_OK);
+        assertThat(httpRequest.body()).isEqualTo("bar");
+    }
+
+    @Test
+    public void should_return_not_found_for_bad_pth() {
+        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/baz");
+
+        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_NOT_FOUND);
+    }
+
 }

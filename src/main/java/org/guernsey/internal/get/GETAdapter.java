@@ -16,7 +16,6 @@
 package org.guernsey.internal.get;
 
 import com.lexicalscope.fluentreflection.FluentMethod;
-import org.guernsey.GuernseyServlet;
 import org.guernsey.internal.RestMethods;
 import org.guernsey.internal.RestResponse;
 
@@ -27,7 +26,7 @@ public class GETAdapter {
     private RestMethods methods;
     private String requestPath;
 
-    public <T extends GuernseyServlet> GETAdapter(RestMethods methods, String requestPath) {
+    public GETAdapter(RestMethods methods, String requestPath) {
          this.methods = methods;
          this.requestPath = requestPath;
     }

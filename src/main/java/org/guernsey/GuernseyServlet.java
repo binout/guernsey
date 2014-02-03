@@ -29,6 +29,7 @@ import java.io.IOException;
 public class GuernseyServlet extends HttpServlet {
 
     private RestMethods methods;
+
     @Override
     public void init() throws ServletException {
         methods = new RestMethods(this);
@@ -50,6 +51,5 @@ public class GuernseyServlet extends HttpServlet {
         }
         resp.setStatus(restResponse.getStatus());
     }
-
 
 }

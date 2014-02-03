@@ -28,7 +28,6 @@ import static com.lexicalscope.fluentreflection.ReflectionMatchers.annotatedWith
 
 public class RestMethods {
 
-
     private Map<String, FluentMethod> getMethods;
 
     public <T extends GuernseyServlet> RestMethods(T servlet) {

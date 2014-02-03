@@ -15,7 +15,8 @@
  */
 package org.guernsey;
 
-import org.guernsey.internal.GetAdapter;
+import org.guernsey.internal.get.GETAdapter;
+import org.guernsey.internal.RestMethods;
 import org.guernsey.internal.RestResponse;
 
 import javax.servlet.ServletException;
@@ -27,10 +28,16 @@ import java.io.IOException;
 
 public class GuernseyServlet extends HttpServlet {
 
+    private RestMethods methods;
+    @Override
+    public void init() throws ServletException {
+        methods = new RestMethods(this);
+    }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
-        GetAdapter getAdapter = new GetAdapter(this, path);
+        GETAdapter getAdapter = new GETAdapter(methods, path);
         RestResponse restResponse = getAdapter.restResponse();
         String body = restResponse.getBody();
         if (body != null) {

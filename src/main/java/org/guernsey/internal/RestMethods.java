@@ -28,21 +28,24 @@ import static com.lexicalscope.fluentreflection.ReflectionMatchers.annotatedWith
 
 public class RestMethods {
 
+    private String basePath;
     private Map<String, FluentMethod> getMethods;
 
     public <T extends GuernseyServlet> RestMethods(T servlet) {
-        this.getMethods = initGetMethods(servlet);
+        this.basePath = PathUtils.getPath(object(servlet).annotation(Path.class));
+        this.getMethods = initGetMethods(servlet, this.basePath);
     }
 
     public Map<String, FluentMethod> getGETMethods() {
         return getMethods;
     }
 
-    static Map<String, FluentMethod> initGetMethods(Object object) {
+    static Map<String, FluentMethod> initGetMethods(Object object, String basePath) {
         Map<String, FluentMethod> methods = new HashMap<String, FluentMethod>();
         for (FluentMethod method : object(object).methods(annotatedWith(GET.class))) {
             String path = PathUtils.getPath(method.annotation(Path.class));
-            methods.put(path, method);
+            String fullPath = PathUtils.fixPath(PathUtils.concatPath(basePath, path));
+            methods.put(fullPath, method);
         }
         return methods;
     }

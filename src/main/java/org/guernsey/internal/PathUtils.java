@@ -33,13 +33,35 @@ public class PathUtils {
         if (SLASH.equals(path)) {
             return path;
         }
-        String pathFixed = path;
-        if (!path.startsWith(SLASH)) {
-            pathFixed = SLASH + path;
-        }
+        return removeEndSlash(addFirstSlash(path));
+    }
+
+    static String removeEndSlash(String pathFixed) {
         if (pathFixed.endsWith(SLASH)) {
             pathFixed =  pathFixed.substring(0, pathFixed.length()-1);
         }
         return pathFixed;
+    }
+
+    static String addFirstSlash(String path) {
+        String pathFixed = path;
+        if (!path.startsWith(SLASH)) {
+            pathFixed = SLASH + path;
+        }
+        return pathFixed;
+    }
+
+    static String removeFirstSlash(String pathFixed) {
+        if (pathFixed.startsWith(SLASH)) {
+            pathFixed =  pathFixed.substring(1, pathFixed.length());
+        }
+        return pathFixed;
+    }
+
+    static String concatPath(String path1, String path2) {
+        if (path1.endsWith(SLASH)) {
+            return path1 + removeFirstSlash(path2);
+        }
+        return path1 + path2;
     }
 }

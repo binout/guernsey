@@ -26,9 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GetServletTest {
+public class GetWithPathServletTest {
 
-    public static class GetServlet extends GuernseyServlet {
+    @Path("hello")
+    public static class GetWithPathServlet extends GuernseyServlet {
 
         @GET
         public String sayHello() {
@@ -41,17 +42,6 @@ public class GetServletTest {
             return "foo";
         }
 
-        @GET
-        @Path("foos/")
-        public String foos() {
-            return "foos";
-        }
-
-        @GET
-        @Path("/bar")
-        public String bar() {
-            return "bar";
-        }
     }
 
     private static ServletTester servletTester;
@@ -60,14 +50,21 @@ public class GetServletTest {
     @BeforeClass
     public static void initServletTester() throws Exception {
         servletTester = new ServletTester();
-        servletTester.addServlet(GetServlet.class, "/");
+        servletTester.addServlet(GetWithPathServlet.class, "/");
         servletTester.start();
         baseUrl = servletTester.createSocketConnector(true);
     }
 
     @Test
-    public void should_get() {
+    public void should_return_404() {
         HttpRequest httpRequest = HttpRequest.get(baseUrl);
+
+        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void should_get() {
+        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/hello");
 
         assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_OK);
         assertThat(httpRequest.body()).isEqualTo("Hello World");
@@ -75,33 +72,10 @@ public class GetServletTest {
 
     @Test
     public void should_get_with_path() {
-        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/foo");
+        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/hello/foo");
 
         assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_OK);
         assertThat(httpRequest.body()).isEqualTo("foo");
-    }
-
-    @Test
-    public void should_get_with_path_trailling_slash() {
-        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/foos");
-
-        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_OK);
-        assertThat(httpRequest.body()).isEqualTo("foos");
-    }
-
-    @Test
-    public void should_get_with_path_leading_slash() {
-        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/bar");
-
-        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_OK);
-        assertThat(httpRequest.body()).isEqualTo("bar");
-    }
-
-    @Test
-    public void should_return_not_found_for_bad_pth() {
-        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/baz");
-
-        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_NOT_FOUND);
     }
 
 }

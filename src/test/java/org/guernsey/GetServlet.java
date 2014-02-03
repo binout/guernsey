@@ -32,6 +32,12 @@ public class GetServlet extends GuernseyServlet {
     }
 
     @GET
+    @Path("foos/")
+    public String foos() {
+        return "foos";
+    }
+
+    @GET
     @Path("/bar")
     public String bar() {
         return "bar";

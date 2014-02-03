@@ -70,6 +70,7 @@ public class GetAdapter {
     }
 
     static String fixPath(String path) {
-        return path.startsWith(SLASH) ? path : SLASH + path;
+        String leadFix = path.startsWith(SLASH) ? path : SLASH + path;
+        return leadFix.endsWith(SLASH) ? leadFix.substring(0, leadFix.length()-1) : leadFix;
     }
 }

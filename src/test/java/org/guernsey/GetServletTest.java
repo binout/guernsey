@@ -54,6 +54,14 @@ public class GetServletTest {
     }
 
     @Test
+    public void should_get_with_path_trailling_slash() {
+        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/foos");
+
+        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_OK);
+        assertThat(httpRequest.body()).isEqualTo("foos");
+    }
+
+    @Test
     public void should_get_with_path_leading_slash() {
         HttpRequest httpRequest = HttpRequest.get(baseUrl + "/bar");
 

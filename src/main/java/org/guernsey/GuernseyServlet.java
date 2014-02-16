@@ -15,9 +15,9 @@
  */
 package org.guernsey;
 
-import org.guernsey.internal.get.GETAdapter;
-import org.guernsey.internal.RestMethods;
+import org.guernsey.internal.RestMethodFactory;
 import org.guernsey.internal.RestResponse;
+import org.guernsey.internal.get.GETAdapter;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -28,18 +28,19 @@ import java.io.IOException;
 
 public class GuernseyServlet extends HttpServlet {
 
-    private RestMethods methods;
+    private RestMethodFactory methods;
 
     @Override
     public void init() throws ServletException {
-        methods = new RestMethods(this);
+        methods = new RestMethodFactory(this);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
         GETAdapter getAdapter = new GETAdapter(methods, path);
-        RestResponse restResponse = getAdapter.restResponse();
+        RestResponse restResponse = getAdapter.restResponse(req.getHeader("Accept"));
+        resp.setContentType(restResponse.getContentType());
         String body = restResponse.getBody();
         if (body != null) {
             ServletOutputStream outputStream = resp.getOutputStream();

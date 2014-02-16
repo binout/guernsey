@@ -15,30 +15,36 @@
  */
 package org.guernsey.internal.get;
 
-import com.lexicalscope.fluentreflection.FluentMethod;
-import org.guernsey.internal.RestMethods;
+import org.guernsey.internal.RestMethod;
+import org.guernsey.internal.RestMethodFactory;
 import org.guernsey.internal.RestResponse;
 
 import javax.servlet.http.HttpServletResponse;
 
 public class GETAdapter {
 
-    private RestMethods methods;
+    private RestMethodFactory methods;
     private String requestPath;
 
-    public GETAdapter(RestMethods methods, String requestPath) {
+    public GETAdapter(RestMethodFactory methods, String requestPath) {
          this.methods = methods;
          this.requestPath = requestPath;
     }
 
-    public RestResponse restResponse() {
+    public RestResponse restResponse(String reqContentType) {
         RestResponse restResponse = new RestResponse();
-        FluentMethod getMethod = methods.getGETMethods().get(requestPath);
+        RestMethod getMethod = methods.getGETMethods().get(requestPath);
         if (getMethod == null) {
             restResponse.withStatus(HttpServletResponse.SC_NOT_FOUND);
         } else {
-            restResponse.withStatus(HttpServletResponse.SC_OK);
-            restResponse.withBody(getMethod.call().toString());
+            String contentType = getMethod.negociateContentType(reqContentType);
+            if (contentType == null) {
+                restResponse.withStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+            } else {
+                restResponse.withStatus(HttpServletResponse.SC_OK);
+                restResponse.withBody(getMethod.value(String.class));
+                restResponse.withContentType(contentType);
+            }
         }
         return restResponse;
     }

@@ -19,6 +19,7 @@ public class RestResponse {
 
     private int status;
     private String body;
+    private String contentType;
 
     public RestResponse withStatus(int status) {
         this.status = status;
@@ -30,11 +31,20 @@ public class RestResponse {
         return this;
     }
 
+    public RestResponse withContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
     public int getStatus() {
         return status;
     }
 
     public String getBody() {
         return body;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 }

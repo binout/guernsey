@@ -26,26 +26,25 @@ import java.util.Map;
 import static com.lexicalscope.fluentreflection.FluentReflection.object;
 import static com.lexicalscope.fluentreflection.ReflectionMatchers.annotatedWith;
 
-public class RestMethods {
+public class RestMethodFactory {
 
     private String basePath;
-    private Map<String, FluentMethod> getMethods;
+    private Map<String, RestMethod> getMethods;
 
-    public <T extends GuernseyServlet> RestMethods(T servlet) {
+    public <T extends GuernseyServlet> RestMethodFactory(T servlet) {
         this.basePath = PathUtils.getPath(object(servlet).annotation(Path.class));
         this.getMethods = initGetMethods(servlet, this.basePath);
     }
 
-    public Map<String, FluentMethod> getGETMethods() {
+    public Map<String, RestMethod> getGETMethods() {
         return getMethods;
     }
 
-    static Map<String, FluentMethod> initGetMethods(Object object, String basePath) {
-        Map<String, FluentMethod> methods = new HashMap<String, FluentMethod>();
+    static Map<String, RestMethod> initGetMethods(Object object, String basePath) {
+        Map<String, RestMethod> methods = new HashMap<String, RestMethod>();
         for (FluentMethod method : object(object).methods(annotatedWith(GET.class))) {
-            String path = PathUtils.getPath(method.annotation(Path.class));
-            String fullPath = PathUtils.fixPath(PathUtils.concatPath(basePath, path));
-            methods.put(fullPath, method);
+            RestMethod restMethod = new RestMethod(basePath, method);
+            methods.put(restMethod.getPath(), restMethod);
         }
         return methods;
     }

@@ -19,6 +19,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import org.eclipse.jetty.testing.ServletTester;
 import org.guernsey.annotation.GET;
 import org.guernsey.annotation.Path;
+import org.guernsey.annotation.Produces;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -33,6 +34,13 @@ public class GetServletTest {
         @GET
         public String sayHello() {
             return "Hello World";
+        }
+
+        @GET
+        @Path("text")
+        @Produces("text/plain")
+        public String returnTextPlain() {
+            return "some text";
         }
 
         @GET
@@ -102,6 +110,22 @@ public class GetServletTest {
         HttpRequest httpRequest = HttpRequest.get(baseUrl + "/baz");
 
         assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_NOT_FOUND);
+    }
+
+    @Test
+    public void should_return_text_plain_if_right_accept() {
+        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/text").accept("text/plain");
+
+        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_OK);
+        assertThat(httpRequest.contentType()).isEqualTo("text/plain");
+        assertThat(httpRequest.body()).isEqualTo("some text");
+    }
+
+    @Test
+    public void should_return_406_if_bad_accept() {
+        HttpRequest httpRequest = HttpRequest.get(baseUrl + "/text").accept("text/html");
+
+        assertThat(httpRequest.code()).isEqualTo(HttpServletResponse.SC_NOT_ACCEPTABLE);
     }
 
 }
